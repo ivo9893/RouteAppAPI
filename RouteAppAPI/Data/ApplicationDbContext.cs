@@ -174,17 +174,106 @@ namespace RouteAppAPI.Data
                 entity.HasIndex(e => e.FollowerUserId);
                 entity.HasIndex(e => e.FollowedUserId);
 
-                entity.HasOne(f => f.Follower)          
-                    .WithMany(u => u.Following)         
+                entity.HasOne(f => f.Follower)
+                    .WithMany(u => u.Following)
                     .HasForeignKey(f => f.FollowerUserId)
                     .OnDelete(DeleteBehavior.Cascade);
 
-                entity.HasOne(f => f.Followed)          
-                    .WithMany(u => u.Followers)         
+                entity.HasOne(f => f.Followed)
+                    .WithMany(u => u.Followers)
                     .HasForeignKey(f => f.FollowedUserId)
                     .OnDelete(DeleteBehavior.NoAction);
 
             });
+
+
+            modelBuilder.Entity<DifficultyLevel>().HasData(
+                new DifficultyLevel
+                {
+                    Id = 1,
+                    Name = "Лесен",
+                    Description = "Равен терен, подходящ за начинаещи",
+                    SortOrder = 1
+                },
+                new DifficultyLevel
+                {
+                    Id = 2,
+                    Name = "Умерен",
+                    Description = "Леко неравен терен с малко изкачване",
+                    SortOrder = 2
+                },
+                new DifficultyLevel
+                {
+                    Id = 3,
+                    Name = "Среден",
+                    Description = "Неравен терен, изисква добра физическа форма",
+                    SortOrder = 3
+                },
+                new DifficultyLevel
+                {
+                    Id = 4,
+                    Name = "Труден",
+                    Description = "Стръмни изкачвания, технически участъци",
+                    SortOrder = 4
+                },
+                new DifficultyLevel
+                {
+                    Id = 5,
+                    Name = "Много труден",
+                    Description = "Екстремни условия, за опитни бегачи",
+                    SortOrder = 5
+                }
+             );
+
+            // Route Types seed data
+            modelBuilder.Entity<RouteType>().HasData(
+                new RouteType
+                {
+                    Id = 1,
+                    Name = "Кръгов маршрут",
+                    Description = "Започва и завършва на едно и също място"
+                },
+                new RouteType
+                {
+                    Id = 2,
+                    Name = "Линеен маршрут",
+                    Description = "От точка А до точка Б"
+                },
+                new RouteType
+                {
+                    Id = 3,
+                    Name = "Туристически",
+                    Description = "Маркирани туристически пътеки"
+                },
+                new RouteType
+                {
+                    Id = 4,
+                    Name = "Планински",
+                    Description = "Високопланински терен"
+                },
+                new RouteType
+                {
+                    Id = 5,
+                    Name = "Горски",
+                    Description = "Маршрути през гора"
+                },
+                new RouteType
+                {
+                    Id = 6,
+                    Name = "Крайбрежен",
+                    Description = "Покрай морето или река"
+                }
+            );
+
+            modelBuilder.Entity<TerrainType>().HasData(
+                new TerrainType { Id = 1, Name = "Асфалт", Description = "Твърда асфалтова настилка" },
+                new TerrainType { Id = 2, Name = "Черен път", Description = "Чакълест или земен път" },
+                new TerrainType { Id = 3, Name = "Пътека", Description = "Тясна планинска пътека" },
+                new TerrainType { Id = 4, Name = "Скали", Description = "Скалист терен" },
+                new TerrainType { Id = 5, Name = "Трева", Description = "Тревиста повърхност" },
+                new TerrainType { Id = 6, Name = "Смесен", Description = "Комбинация от различни терени" },
+                new TerrainType { Id = 7, Name = "Пясък", Description = "Пясъчна повърхност" }
+            );
         }
     }
 }

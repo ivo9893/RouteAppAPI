@@ -96,6 +96,6 @@ namespace RouteAppAPI.Models
         public virtual ICollection<Like> Likes { get; set; } = new List<Like>();
         public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
         public virtual ICollection<SavedRoute> SavedRoutes { get; set; } = new List<SavedRoute>();
-        
+
     }
 }

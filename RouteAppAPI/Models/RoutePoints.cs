@@ -28,11 +28,11 @@ namespace RouteAppAPI.Models
 
         [Required]
         public int SequenceOrder { get; set; }
-        
+
         public DateTime Timestamp { get; set; }
 
         [ForeignKey("RouteId")]
-        public virtual Route Route { get; set; } 
+        public virtual Route Route { get; set; }
 
     }
 }

@@ -16,7 +16,7 @@ namespace RouteAppAPI.Models
         public int UserId { get; set; }
         [Required]
         [MaxLength(1000)]
-        public string CommentText{ get; set; }
+        public string CommentText { get; set; }
 
         public int? ParentCommentId { get; set; }
         public bool isDeleted { get; set; } = false;

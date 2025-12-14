@@ -31,7 +31,7 @@ namespace RouteAppAPI.Models
 
         [Column(TypeName = "decimal(10, 7)")]
         public decimal? Longitude { get; set; }
-        
+
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
@@ -39,6 +39,6 @@ namespace RouteAppAPI.Models
         public virtual Route Route { get; set; }
 
         [ForeignKey("UserId")]
-        public virtual User User { get; set; } 
+        public virtual User User { get; set; }
     }
 }

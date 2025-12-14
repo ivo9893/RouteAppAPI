@@ -24,7 +24,7 @@ namespace RouteAppAPI.Models
         public string? FirstName { get; set; }
         [MaxLength(50)]
         public string? LastName { get; set; }
-        
+
         [MaxLength(2000)]
         public string? Bio { get; set; }
         [MaxLength(255)]
