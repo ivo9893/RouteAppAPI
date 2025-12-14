@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RouteAppAPI.Models
@@ -15,6 +14,15 @@ namespace RouteAppAPI.Models
         public int UserId { get; set; }
 
         [Required]
+        public int RouteTypeId { get; set; }
+
+        [Required]
+        public int TerrainTypeId { get; set; }
+
+        [Required]
+        public int DifficultyLevelId { get; set; }
+
+        [Required]
         [MaxLength(100)]
         public string Name { get; set; }
 
@@ -24,9 +32,9 @@ namespace RouteAppAPI.Models
         [MaxLength(200)]
         public string? StartLocationName { get; set; }
 
-        [Column(TypeName = "decimal(10, 7")]
+        [Column(TypeName = "decimal(10, 7)")]
         public decimal? StartLatitude { get; set; }
-        [Column(TypeName = "decimal(10, 7")]
+        [Column(TypeName = "decimal(10, 7)")]
         public decimal? StartLongitude { get; set; }
 
         [MaxLength(200)]
@@ -50,14 +58,6 @@ namespace RouteAppAPI.Models
         public decimal? MinElevationM { get; set; }
 
 
-        [Required]
-        public RouteType RouteType { get; set; }
-
-        [Required]
-        public TerrainType TerrainType { get; set; }
-
-        [Required]
-        public DifficultyLevel DifficultyLevel { get; set; }
 
         public bool WaterAvailable { get; set; } = false;
 
@@ -81,11 +81,21 @@ namespace RouteAppAPI.Models
         [ForeignKey("UserId")]
         public virtual User User { get; set; }
 
+
+        [ForeignKey("RouteTypeId")]
+        public virtual RouteType RouteType { get; set; }
+
+        [ForeignKey("TerrainTypeId")]
+        public virtual TerrainType TerrainType { get; set; }
+
+        [ForeignKey("DifficultyLevelId")]
+        public virtual DifficultyLevel DifficultyLevel { get; set; }
+
         public virtual ICollection<RoutePoints> RoutePoints { get; set; } = new List<RoutePoints>();
         public virtual ICollection<RoutePhotos> RoutePhotos { get; set; } = new List<RoutePhotos>();
         public virtual ICollection<Like> Likes { get; set; } = new List<Like>();
         public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
         public virtual ICollection<SavedRoute> SavedRoutes { get; set; } = new List<SavedRoute>();
-        public virtual ICollection<RouteView> RouteViews { get; set; } = new List<RouteView>();
+        
     }
 }

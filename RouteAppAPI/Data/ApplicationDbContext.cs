@@ -67,7 +67,9 @@ namespace RouteAppAPI.Data
                 entity.HasIndex(e => e.CreatedAt);
                 entity.HasIndex(e => e.DistanceKm);
                 entity.HasIndex(e => e.ElevationGainM);
-                entity.HasIndex(e => e.DifficultyLevel);
+                entity.HasIndex(e => e.RouteTypeId);
+                entity.HasIndex(e => e.TerrainTypeId);
+                entity.HasIndex(e => e.DifficultyLevelId);
                 entity.HasIndex(e => e.IsPublic);
                 entity.HasIndex(e => e.Region);
                 entity.HasIndex(e => new { e.StartLatitude, e.StartLongitude });
@@ -96,6 +98,21 @@ namespace RouteAppAPI.Data
                     .WithOne(sr => sr.Route)
                     .HasForeignKey(sr => sr.RouteId)
                     .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(r => r.RouteType)
+                    .WithMany(rt => rt.Routes)
+                    .HasForeignKey(r => r.RouteTypeId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(r => r.TerrainType)
+                    .WithMany(tt => tt.Routes)
+                    .HasForeignKey(r => r.TerrainTypeId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(r => r.DifficultyLevel)
+                    .WithMany(d => d.Routes)
+                    .HasForeignKey(r => r.DifficultyLevelId)
+                    .OnDelete(DeleteBehavior.Restrict);
 
             });
 
@@ -167,9 +184,6 @@ namespace RouteAppAPI.Data
                     .HasForeignKey(f => f.FollowedUserId)
                     .OnDelete(DeleteBehavior.NoAction);
 
-                entity.ToTable(t => t.HasCheckConstraint(
-                    "CK_Follows_NoSelfFollow",
-                    "[FollowerUserId] != [FollowedUserId]"));
             });
         }
     }
