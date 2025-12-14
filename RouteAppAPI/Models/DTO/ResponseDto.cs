@@ -2,8 +2,10 @@ namespace RouteAppAPI.Models.DTO
 {
     public class AuthResponseDto
     {
-        public string Token { get; set; }
-        public UserProfileDto User { get; set; }
+        public string AccessToken { get; set; }
+        public string RefreshToken { get; set; }
+        public DateTime AccessTokenExpiry { get; set; }
+        public DateTime RefreshTokenExpiry { get; set; }
     }
 
     public class ApiResponseDto<T>
