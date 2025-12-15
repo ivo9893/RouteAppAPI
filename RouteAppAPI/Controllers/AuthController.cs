@@ -17,7 +17,7 @@ namespace RouteAppAPI.Controllers
         }
 
         [HttpPost("login")]
-        [ProducesResponseType(typeof(AuthResponseDto), 200)]
+        [ProducesResponseType(typeof(AuthResponse), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
         public async Task<IActionResult> Login([FromBody] UserLoginDto loginDto)
@@ -34,7 +34,7 @@ namespace RouteAppAPI.Controllers
             {
                 HttpOnly = true,
                 Secure = true,
-                SameSite = SameSiteMode.Strict,
+                SameSite = SameSiteMode.None,
                 Expires = auth.RefreshTokenExpiry,
                 Path = "/api/auth/refresh"
             });

@@ -25,7 +25,7 @@ namespace RouteAppAPI.Services
             _configuration = configuration;
         }
 
-        public async Task<AuthResponseDto> LoginAsync(UserLoginDto loginDto)
+        public async Task<AuthResponse> LoginAsync(UserLoginDto loginDto)
         {
 
             if (loginDto.Password == null)
@@ -52,12 +52,13 @@ namespace RouteAppAPI.Services
 
             // Generate and Save Refresh Token
             var refreshToken = GenerateRefreshToken();
+            var refreshTokenHash = HashToken(refreshToken);
             var refreshTokenExpiry = DateTime.UtcNow.AddDays(
                 jwtSettings.GetValue<int>("RefreshTokenExpirationDays"));
 
             var newRefreshToken = new Token
             {
-                RefreshToken = refreshToken,
+                RefreshToken = refreshTokenHash,
                 ExpiryDate = refreshTokenExpiry,
                 UserId = user.Id
             };
@@ -65,7 +66,7 @@ namespace RouteAppAPI.Services
             _context.Tokens.Add(newRefreshToken);
             await _context.SaveChangesAsync();
 
-            return new AuthResponseDto
+            return new AuthResponse
             {
                 AccessToken = accessToken,
                 RefreshToken = refreshToken,
@@ -76,11 +77,12 @@ namespace RouteAppAPI.Services
 
         }
 
-        public async Task<AuthResponseDto> RefreshTokenAsync(string refreshToken)
+        public async Task<AuthResponse> RefreshTokenAsync(string refreshToken)
         {
+            var refreshTokenHash = HashToken(refreshToken);
             var existingRefreshToken = await _context.Tokens
                                                     .Include(rt => rt.User) // Eager load user
-                                                    .SingleOrDefaultAsync(rt => rt.RefreshToken == refreshToken);
+                                                    .SingleOrDefaultAsync(rt => rt.RefreshToken == refreshTokenHash);
 
             if (existingRefreshToken == null || existingRefreshToken.IsRevoked || existingRefreshToken.ExpiryDate <= DateTime.UtcNow)
             {
@@ -102,12 +104,13 @@ namespace RouteAppAPI.Services
 
             // Generate new Refresh Token
             var newRefreshTokenValue = GenerateRefreshToken();
+            var newRefreshTokenHash = HashToken(newRefreshTokenValue);
             var newRefreshTokenExpiry = DateTime.UtcNow.AddDays(
                 jwtSettings.GetValue<int>("RefreshTokenExpirationDays"));
 
             var newRefreshToken = new Token
             {
-                RefreshToken = newRefreshTokenValue,
+                RefreshToken = newRefreshTokenHash,
                 ExpiryDate = newRefreshTokenExpiry,
                 UserId = existingRefreshToken.User.Id
             };
@@ -115,7 +118,7 @@ namespace RouteAppAPI.Services
             _context.Tokens.Add(newRefreshToken);
             await _context.SaveChangesAsync();
 
-            return new AuthResponseDto
+            return new AuthResponse
             {
                 AccessToken = newAccessToken,
                 RefreshToken = newRefreshTokenValue,
@@ -162,6 +165,13 @@ namespace RouteAppAPI.Services
                 rng.GetBytes(randomNumber);
                 return Convert.ToBase64String(randomNumber);
             }
+        }
+
+        private static string HashToken(string token)
+        {
+            using var sha256 = SHA256.Create();
+            var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(token));
+            return Convert.ToBase64String(bytes);
         }
     }
 }

@@ -1,6 +1,6 @@
 namespace RouteAppAPI.Models.DTO
 {
-    public class AuthResponseDto
+    public class AuthResponse
     {
         public string AccessToken { get; set; }
         public string RefreshToken { get; set; }
@@ -8,7 +8,7 @@ namespace RouteAppAPI.Models.DTO
         public DateTime RefreshTokenExpiry { get; set; }
     }
 
-    public class ApiResponseDto<T>
+    public class ApiResponse<T>
     {
         public bool Success { get; set; }
         public string? Message { get; set; }

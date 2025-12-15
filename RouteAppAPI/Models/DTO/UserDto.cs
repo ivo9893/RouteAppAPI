@@ -22,6 +22,11 @@ namespace RouteAppAPI.Models.DTO
 
         [StringLength(100)]
         public string? LastName { get; set; }
+
+        [Required]
+        [StringLength(200)]
+        public string Location { get; set; }
+
     }
 
     public class UserLoginDto

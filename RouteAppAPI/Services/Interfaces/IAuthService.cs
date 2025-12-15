@@ -4,7 +4,7 @@ namespace RouteAppAPI.Services.Interfaces
 {
     public interface IAuthService
     {
-        Task<AuthResponseDto> LoginAsync(UserLoginDto user);
-        Task<AuthResponseDto> RefreshTokenAsync(string refreshToken);
+        Task<AuthResponse> LoginAsync(UserLoginDto user);
+        Task<AuthResponse> RefreshTokenAsync(string refreshToken);
     }
 }
