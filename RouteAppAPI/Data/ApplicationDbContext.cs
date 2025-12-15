@@ -19,6 +19,7 @@ namespace RouteAppAPI.Data
         public DbSet<SavedRoute> SavedRoutes { get; set; }
         public DbSet<Collection> Collections { get; set; }
         public DbSet<Follow> Follows { get; set; }
+        public DbSet<Token> Tokens{ get; set; }
 
         public DbSet<TerrainType> TerrainTypes { get; set; }
         public DbSet<DifficultyLevel> DifficultyLevels { get; set; }
@@ -186,6 +187,11 @@ namespace RouteAppAPI.Data
 
             });
 
+            modelBuilder.Entity<Token>()
+                .HasOne(rt => rt.User)
+                .WithMany()
+                .HasForeignKey(rt => rt.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<DifficultyLevel>().HasData(
                 new DifficultyLevel
