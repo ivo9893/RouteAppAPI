@@ -12,8 +12,6 @@ namespace GPXParser
         public double Longitude { get; set; }
         public double? Elevation { get; set; }
         public DateTime? Time { get; set; }
-
-        public Dictionary<string, string> Extensions { get; } = new();
         public Waypoint(double latitude, double longitude, double? elevation = null, DateTime? time = null)
         {
             Latitude = latitude;

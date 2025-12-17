@@ -14,8 +14,6 @@ namespace GPXParser
         private static readonly XNamespace gpx = "http://www.topografix.com/GPX/1/1";
         public Route Parse(Stream gpxStream)
         {
-            XNamespace gpx = "http://www.topografix.com/GPX/1/1";
-
             var waypoints = new List<Waypoint>();
             string routeName = "Route";
 
@@ -32,15 +30,13 @@ namespace GPXParser
                 if (reader.NodeType != XmlNodeType.Element)
                     continue;
 
-                // <name> inside <trk>
                 if (reader.LocalName == "name" &&
                     reader.NamespaceURI == gpx.NamespaceName &&
-                    reader.Depth == 2) // gpx > trk > name
+                    reader.Depth == 2) 
                 {
                     routeName = reader.ReadElementContentAsString();
                 }
 
-                // <trkpt>
                 if (reader.LocalName == "trkpt" &&
                     reader.NamespaceURI == gpx.NamespaceName)
                 {
@@ -50,20 +46,19 @@ namespace GPXParser
                     double? ele = null;
                     DateTime? time = null;
 
-                    // Read inside <trkpt>
                     while (reader.Read())
                     {
                         if (reader.NodeType == XmlNodeType.EndElement &&
                             reader.LocalName == "trkpt")
                             break;
 
-                        if (reader.NodeType != XmlNodeType.Element)
+                        if (reader.NodeType != XmlNodeType.Element && reader.NodeType != XmlNodeType.Text)
                             continue;
 
                         if (reader.LocalName == "ele")
                             ele = reader.ReadElementContentAsDouble();
 
-                        else if (reader.LocalName == "time")
+                        if (reader.LocalName == "time")
                             time = reader.ReadElementContentAsDateTime();
                     }
 
