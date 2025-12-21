@@ -18,7 +18,7 @@ namespace RouteAppAPI.Services
         public async Task<ApiResponse<object>> RegisterUser(UserRegistrationDto user)
         {
             var existingUser = await _context.Users
-                .FirstOrDefaultAsync(u => u.Email == user.Email || u.Username == user.Username);
+                .FirstOrDefaultAsync(u => u.Email == user.Email);
 
             if (existingUser != null)
             {
@@ -27,8 +27,6 @@ namespace RouteAppAPI.Services
                 if (existingUser.Email == user.Email)
                     errors.Add("Email");
 
-                if (existingUser.Username == user.Username)
-                    errors.Add("Username");
 
                 return new ApiResponse<object>
                 {
@@ -40,7 +38,6 @@ namespace RouteAppAPI.Services
 
             var newUser = new User
             {
-                Username = user.Username,
                 Email = user.Email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.Password),
                 FirstName = user.FirstName,

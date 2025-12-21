@@ -31,7 +31,6 @@ namespace RouteAppAPI.Data
 
             modelBuilder.Entity<User>(entity =>
             {
-                entity.HasIndex(e => e.Username).IsUnique();
                 entity.HasIndex(e => e.Email).IsUnique();
 
                 entity.HasIndex(e => e.CreatedAt);
