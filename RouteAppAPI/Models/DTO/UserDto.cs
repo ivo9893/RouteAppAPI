@@ -5,9 +5,6 @@ namespace RouteAppAPI.Models.DTO
 {
     public class UserRegistrationDto
     {
-        [Required]
-        [StringLength(50, MinimumLength = 3)]
-        public string Username { get; set; }
 
         [Required]
         [EmailAddress]
@@ -32,7 +29,7 @@ namespace RouteAppAPI.Models.DTO
     public class UserLoginDto
     {
         [Required]
-        public string EmailOrUsername { get; set; }
+        public string Email { get; set; }
 
         [Required]
         public string Password { get; set; }
@@ -41,7 +38,6 @@ namespace RouteAppAPI.Models.DTO
     public class UserProfileDto
     {
         public int Id { get; set; }
-        public string Username { get; set; }
         public string Email { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }

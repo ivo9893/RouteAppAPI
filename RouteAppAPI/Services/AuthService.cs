@@ -34,7 +34,7 @@ namespace RouteAppAPI.Services
                 return null;
             }
 
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == loginDto.EmailOrUsername);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginDto.Email);
 
             if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
             {
