@@ -1,10 +1,11 @@
 ﻿using RouteAppAPI.Models;
+using RouteAppAPI.Models.DTO;
 
 namespace RouteAppAPI.Services.Interfaces
 {
     public interface IDifficultyLevelService
     {
-        Task<List<DifficultyLevel>> GetDifficultyLevelsAsync();
-        Task<DifficultyLevel?> GetDifficultyLevelAsync(int level);
+        Task<List<DifficultyLevelDto>> GetDifficultyLevelsAsync();
+        Task<DifficultyLevelDto?> GetDifficultyLevelAsync(int level);
     }
 }
