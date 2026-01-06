@@ -9,12 +9,14 @@ namespace GPXParser
     public class Route
     {
         public string Name { get; set; }
-        public List<Waypoint> Waypoints { get; set; }
-
+        public List<Waypoint> Points { get; set; } = new List<Waypoint>();
+        public double TotalDistance => Points.LastOrDefault()?.DistanceFromStart ?? 0;
+        public double TotalElevationGain { get; set; }
+        public Route() { }
         public Route(string name, List<Waypoint> waypoints)
         {
             Name = name;
-            Waypoints = waypoints;
+            Points = waypoints;
         }
     }
 }

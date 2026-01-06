@@ -1,8 +1,11 @@
+using CloudinaryDotNet;
+using dotenv.net;
 using GPXParser;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using NetTopologySuite.IO.Converters;
 using RouteAppAPI.Data;
 using RouteAppAPI.Services;
 using RouteAppAPI.Services.Interfaces;
@@ -10,9 +13,12 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new GeoJsonConverterFactory());
+    });
 
 builder.Services.AddEndpointsApiExplorer(); // Required for Swagger
 builder.Services.AddSwaggerGen(c =>
@@ -48,7 +54,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-      options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+      options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"), o => o.UseNetTopologySuite()));
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -56,6 +62,7 @@ builder.Services.AddScoped<IGpxParser, GpxParser>();
 builder.Services.AddScoped<ITerrainTypeService, TerrainTypeService>();
 builder.Services.AddScoped<IDifficultyLevelService, DifficultyLevelService>();
 builder.Services.AddScoped<IRouteTypeService, RouteTypeService>();
+builder.Services.AddScoped<IRouteService, RouteService>();
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = jwtSettings["Secret"] ?? throw new InvalidOperationException("JWT Secret not configured.");
@@ -92,6 +99,13 @@ builder.Services.AddCors(options =>
               .AllowCredentials();
     });
 });
+
+DotEnv.Load(options: new DotEnvOptions(probeForEnv: true));
+Cloudinary cloudinary = new Cloudinary(Environment.GetEnvironmentVariable("CLOUDINARY_URL"));
+cloudinary.Api.Secure = true;
+
+builder.Services.AddSingleton(cloudinary);
+
 
 var app = builder.Build();
 

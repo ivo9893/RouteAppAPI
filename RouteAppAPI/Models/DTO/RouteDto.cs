@@ -57,25 +57,21 @@ namespace RouteAppAPI.Models.DTO
 
     public class RouteUpdateDto
     {
+        [Required]
+        public int Id { get; set; }
+
         [StringLength(200, MinimumLength = 3)]
         public string? Name { get; set; }
 
         [StringLength(2000)]
         public string? Description { get; set; }
 
-        public RouteType? RouteType { get; set; }
-        public TerrainType? TerrainType { get; set; }
-        public DifficultyLevel? DifficultyLevel { get; set; }
+        public int? RouteType { get; set; }
+        public int? TerrainType { get; set; }
+        public int? DifficultyLevel { get; set; }
 
-        [StringLength(500)]
-        public string? ParkingInfo { get; set; }
+        public List<string> ImagesUrls { get; set; }
 
-        public bool? WaterAvailable { get; set; }
-
-        [StringLength(100)]
-        public string? BestSeasons { get; set; }
-
-        public bool? IsPublic { get; set; }
     }
 
     public class RouteListDto

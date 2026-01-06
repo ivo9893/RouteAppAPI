@@ -12,7 +12,6 @@ namespace RouteAppAPI.Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<Models.Route> Routes { get; set; }
-        public DbSet<RoutePoints> RoutePoints { get; set; }
         public DbSet<RoutePhotos> RoutePhotos { get; set; }
         public DbSet<Like> Likes { get; set; }
         public DbSet<Comment> Comments { get; set; }
@@ -28,6 +27,8 @@ namespace RouteAppAPI.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.HasPostgresExtension("postgis");
 
             modelBuilder.Entity<User>(entity =>
             {
@@ -74,11 +75,6 @@ namespace RouteAppAPI.Data
                 entity.HasIndex(e => e.Region);
                 entity.HasIndex(e => new { e.StartLatitude, e.StartLongitude });
 
-                entity.HasMany(r => r.RoutePoints)
-                    .WithOne(r => r.Route)
-                    .HasForeignKey(r => r.RouteId)
-                    .OnDelete(DeleteBehavior.Cascade);
-
                 entity.HasMany(r => r.RoutePhotos)
                     .WithOne(r => r.Route)
                     .HasForeignKey(r => r.RouteId)
@@ -114,11 +110,6 @@ namespace RouteAppAPI.Data
                     .HasForeignKey(r => r.DifficultyLevelId)
                     .OnDelete(DeleteBehavior.Restrict);
 
-            });
-
-            modelBuilder.Entity<RoutePoints>(entity =>
-            {
-                entity.HasIndex(e => new { e.RouteId, e.SequenceOrder });
             });
 
             modelBuilder.Entity<RoutePhotos>(entity =>

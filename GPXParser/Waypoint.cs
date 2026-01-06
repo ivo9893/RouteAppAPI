@@ -6,18 +6,12 @@ using System.Threading.Tasks;
 
 namespace GPXParser
 {
-    public class Waypoint
+    public class  Waypoint
     {
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         public double? Elevation { get; set; }
+        public double DistanceFromStart { get; set; }
         public DateTime? Time { get; set; }
-        public Waypoint(double latitude, double longitude, double? elevation = null, DateTime? time = null)
-        {
-            Latitude = latitude;
-            Longitude = longitude;
-            Elevation = elevation;
-            Time = time;
-        }
     }
 }

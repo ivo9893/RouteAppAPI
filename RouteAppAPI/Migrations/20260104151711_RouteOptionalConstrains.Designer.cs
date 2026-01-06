@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -12,9 +13,11 @@ using RouteAppAPI.Data;
 namespace RouteAppAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260104151711_RouteOptionalConstrains")]
+    partial class RouteOptionalConstrains
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -252,7 +255,7 @@ namespace RouteAppAPI.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
 
-                    b.Property<int?>("DifficultyLevelId")
+                    b.Property<int>("DifficultyLevelId")
                         .HasColumnType("integer");
 
                     b.Property<decimal>("DistanceKm")
@@ -299,7 +302,7 @@ namespace RouteAppAPI.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<int?>("RouteTypeId")
+                    b.Property<int>("RouteTypeId")
                         .HasColumnType("integer");
 
                     b.Property<int>("SavesCount")
@@ -315,7 +318,7 @@ namespace RouteAppAPI.Migrations
                     b.Property<decimal?>("StartLongitude")
                         .HasColumnType("decimal(10, 7)");
 
-                    b.Property<int?>("TerrainTypeId")
+                    b.Property<int>("TerrainTypeId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -742,17 +745,20 @@ namespace RouteAppAPI.Migrations
                     b.HasOne("RouteAppAPI.Models.DifficultyLevel", "DifficultyLevel")
                         .WithMany("Routes")
                         .HasForeignKey("DifficultyLevelId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("RouteAppAPI.Models.RouteType", "RouteType")
                         .WithMany("Routes")
                         .HasForeignKey("RouteTypeId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("RouteAppAPI.Models.TerrainType", "TerrainType")
                         .WithMany("Routes")
                         .HasForeignKey("TerrainTypeId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("RouteAppAPI.Models.User", "User")
                         .WithMany("Routes")
