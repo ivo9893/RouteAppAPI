@@ -63,6 +63,7 @@ builder.Services.AddScoped<ITerrainTypeService, TerrainTypeService>();
 builder.Services.AddScoped<IDifficultyLevelService, DifficultyLevelService>();
 builder.Services.AddScoped<IRouteTypeService, RouteTypeService>();
 builder.Services.AddScoped<IRouteService, RouteService>();
+builder.Services.AddScoped<IRoutePhotosService, RoutePhotosService>();
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = jwtSettings["Secret"] ?? throw new InvalidOperationException("JWT Secret not configured.");

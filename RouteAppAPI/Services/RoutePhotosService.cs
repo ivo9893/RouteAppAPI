@@ -1,5 +1,6 @@
 ﻿using CloudinaryDotNet;
 using RouteAppAPI.Data;
+using RouteAppAPI.Models;
 using RouteAppAPI.Services.Interfaces;
 
 namespace RouteAppAPI.Services
@@ -7,20 +8,32 @@ namespace RouteAppAPI.Services
     public class RoutePhotosService : IRoutePhotosService
     {
 
-        private readonly Cloudinary _cloudinary;
         private readonly ApplicationDbContext _context;
 
-        public RoutePhotosService(Cloudinary cloudinary, ApplicationDbContext context)
+        public RoutePhotosService(ApplicationDbContext context)
         {
-            _cloudinary = cloudinary;
             _context = context;
         }
 
-        public Task<bool> UploadRoutePhotos(List<IFormFile> photos)
+        public async Task<bool> UploadRoutePhotos(List<RoutePhotos> photos)
         {
+            if (photos == null || !photos.Any())
+            {
+                return false;
+            }
 
+            try
+            {
+                _context.RoutePhotos.AddRange(photos);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
 
-            return null;
+                return false;
+            }
+            return true;
         }
     }
 }

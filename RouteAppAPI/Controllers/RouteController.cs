@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using RouteAppAPI.Models;
 using RouteAppAPI.Models.DTO;
 using RouteAppAPI.Services.Interfaces;
 using System.Security.Claims;
@@ -10,10 +11,12 @@ namespace RouteAppAPI.Controllers
     public class RouteController : ControllerBase
     {
         private readonly IRouteService _routeService;
+        private readonly IRoutePhotosService _routePhotoService;
 
-        public RouteController(IRouteService routeService)
+        public RouteController(IRouteService routeService, IRoutePhotosService routePhotoService)
         {
             _routeService = routeService;
+            _routePhotoService = routePhotoService;
         }
 
         [HttpPost("initial-create-route")]
@@ -52,10 +55,28 @@ namespace RouteAppAPI.Controllers
         public async Task<ActionResult<ApiResponse<object>>> UpdateRoute([FromBody] RouteUpdateDto route)
         {
             var updateResult = await _routeService.UpdateRouteAsync(route);
+            
             if (!updateResult)
             {
                 return ApiResponse<object>.Fail("Route not found");
             }
+
+            if (route.ImagesUrls != null && route.ImagesUrls.Any())
+            {
+                var photos = route.ImagesUrls.Select(url => new RoutePhotos
+                {
+                    RouteId = route.Id,
+                    UserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value),
+                    PhotoUrl = url,
+                    CreatedAt = DateTime.UtcNow
+                }).ToList();
+                var photosResult = await _routePhotoService.UploadRoutePhotos(photos);
+                if (!photosResult)
+                {
+                    return ApiResponse<object>.Fail("Failed to upload route photos");
+                }
+            }
+
             return ApiResponse<object>.Ok(new
             {
                 message = "Route updated successfully!"

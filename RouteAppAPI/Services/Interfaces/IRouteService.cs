@@ -1,4 +1,5 @@
 ﻿using CloudinaryDotNet.Actions;
+using RouteAppAPI.Models;
 using RouteAppAPI.Models.DTO;
 
 namespace RouteAppAPI.Services.Interfaces
