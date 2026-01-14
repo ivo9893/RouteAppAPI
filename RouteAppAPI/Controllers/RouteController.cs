@@ -19,6 +19,55 @@ namespace RouteAppAPI.Controllers
             _routePhotoService = routePhotoService;
         }
 
+
+        [HttpGet("get-routes")]
+        public async Task<ActionResult<ApiResponse<object>>> GetRoutes()
+        {
+            try
+            {
+                var routes = await _routeService.GetRoutes();
+
+                var formattedRoutes = routes.Select(route => new
+                {
+                    routeId = route.Id,
+                    name = route.Name,
+                    distanceKm = route.DistanceKm,
+                    elevationGainM = route.ElevationGainM,
+                    isDraft = route.IsDraft,
+                    createdAt = route.CreatedAt,
+                    gpxFileUrl = route.GpxFileUrl,
+                    user = new
+                    {
+                        id = route.User.Id,
+                        name = route.User.FirstName + " " + route.User.LastName,
+                        avatar = route.User.ProfilePhotoUrl
+                    },
+                    thumbnailUrl = route.ThumbnailUrl,
+                    difficultyLevel = route.DifficultyLevel?.Name,
+                    country = route.Country,
+                    city = route.Region
+
+
+                }).ToList();
+
+                return ApiResponse<object>.Ok(formattedRoutes, "success");
+
+            } catch (Exception e)
+            {
+                var errorResponse = ApiResponse<object>.Fail(
+                    errorMessage: "An error occurred while processing your request.",
+                    errors: new List<string> { e.Message } 
+                );
+
+                return StatusCode(500, errorResponse);
+            }
+            finally
+            {
+
+            }
+
+        }
+
         [HttpPost("initial-create-route")]
         [Consumes("multipart/form-data")]
 
@@ -36,7 +85,7 @@ namespace RouteAppAPI.Controllers
 
             await using var stream = file.OpenReadStream();
 
-            var routeCreated = await _routeService.CreateDraftRouteAsync(file.FileName, int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value), stream);
+            var routeCreated = await _routeService.CreateDraftRouteAsync(file.FileName, int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 1, stream);
 
             return ApiResponse<object>.Ok(new
             {
@@ -45,7 +94,10 @@ namespace RouteAppAPI.Controllers
                     routeId = routeCreated.Id,
                     totalDistance = routeCreated.DistanceKm,
                     totalElevation = routeCreated.ElevationGainM,
-                    name = routeCreated.Name
+                    name = routeCreated.Name,
+                    city = routeCreated.Region,
+                    country = routeCreated.Country
+
                 },
                 message = "Route created successfully!"
             });
@@ -66,7 +118,7 @@ namespace RouteAppAPI.Controllers
                 var photos = route.ImagesUrls.Select(url => new RoutePhotos
                 {
                     RouteId = route.Id,
-                    UserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value),
+                    UserId = int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 1,
                     PhotoUrl = url,
                     CreatedAt = DateTime.UtcNow
                 }).ToList();

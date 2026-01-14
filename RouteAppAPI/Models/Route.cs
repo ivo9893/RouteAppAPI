@@ -65,6 +65,9 @@ namespace RouteAppAPI.Models
         [MaxLength(255)]
         public string? GpxFileUrl { get; set; }
 
+        [MaxLength(255)]
+        public string? ThumbnailUrl { get; set; }
+
         public int LikesCount { get; set; } = 0;
         public int CommentsCount { get; set; } = 0;
         public int SavesCount { get; set; } = 0;

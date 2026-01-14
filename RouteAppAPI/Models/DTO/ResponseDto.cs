@@ -34,5 +34,6 @@ namespace RouteAppAPI.Models.DTO
                 Errors = errors ?? new List<string> { errorMessage }
             };
         }
+
     }
 }
