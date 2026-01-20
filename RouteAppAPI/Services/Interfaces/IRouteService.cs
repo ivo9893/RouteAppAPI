@@ -8,7 +8,7 @@ namespace RouteAppAPI.Services.Interfaces
     {
         Task<RawUploadResult> UploadGpx(IFormFile file);
         Task<Models.Route> CreateDraftRouteAsync(string fileName, int userId, Stream fileStream);
-        Task<bool> UpdateRouteAsync(RouteUpdateDto route);
+        Task<bool> UpdateRouteAsync(RouteUpdateDto route, int userId);
         Task<List<Models.Route>> GetRoutes();
     }
 }

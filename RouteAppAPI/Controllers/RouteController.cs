@@ -83,6 +83,11 @@ namespace RouteAppAPI.Controllers
                 return BadRequest("The files is not in .gpx format");
             }
 
+            if (User.Identity?.IsAuthenticated != true)
+            {
+                return Unauthorized("Unauthorized");
+            }
+
             await using var stream = file.OpenReadStream();
 
             var routeCreated = await _routeService.CreateDraftRouteAsync(file.FileName, int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 1, stream);
@@ -106,7 +111,14 @@ namespace RouteAppAPI.Controllers
         [HttpPut("update-route")]
         public async Task<ActionResult<ApiResponse<object>>> UpdateRoute([FromBody] RouteUpdateDto route)
         {
-            var updateResult = await _routeService.UpdateRouteAsync(route);
+
+            if (User.Identity?.IsAuthenticated != true)
+            {
+                return Unauthorized("Unauthorized");
+            }
+
+            int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out var userId);
+            var updateResult = await _routeService.UpdateRouteAsync(route, userId);
             
             if (!updateResult)
             {
@@ -118,7 +130,7 @@ namespace RouteAppAPI.Controllers
                 var photos = route.ImagesUrls.Select(url => new RoutePhotos
                 {
                     RouteId = route.Id,
-                    UserId = int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 1,
+                    UserId = userId,
                     PhotoUrl = url,
                     CreatedAt = DateTime.UtcNow
                 }).ToList();

@@ -120,14 +120,14 @@ namespace RouteAppAPI.Services
             return allRoutes;
         }
 
-        public async Task<bool> UpdateRouteAsync(RouteUpdateDto route)
+        public async Task<bool> UpdateRouteAsync(RouteUpdateDto route, int userId)
         {
-            var existingRoute = await _context.Routes.FirstOrDefaultAsync(r => r.Id == route.Id);
+            var existingRoute = await _context.Routes.FirstOrDefaultAsync(r => r.Id == route.Id && r.UserId == userId);
             if (existingRoute == null)
             {
                 return false;
             }
-            existingRoute.Name = route.Name;
+            existingRoute.Name = route.Name ?? "";
             existingRoute.Description = route.Description;
             existingRoute.RouteTypeId = route.RouteType;
             existingRoute.TerrainTypeId = route.TerrainType;
