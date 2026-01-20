@@ -60,15 +60,15 @@ namespace GPXParser
                     }
                     else if (ReferenceEquals(reader.LocalName, atomEle) && currentPoint != null)
                     {
-                        if (double.TryParse(reader.ReadElementContentAsString(), out double ele)) currentPoint.Elevation = ele;
+                        if (double.TryParse(ReadInnerValue(reader), out double ele)) currentPoint.Elevation = ele;
                     }
                     else if (ReferenceEquals(reader.LocalName, atomTime) && currentPoint != null)
                     {
-                        if (DateTime.TryParse(reader.ReadElementContentAsString(), out DateTime t)) currentPoint.Time = t;
+                        if (DateTime.TryParse(ReadInnerValue(reader), out DateTime t)) currentPoint.Time = t;
                     }
                     else if (!nameFound && ReferenceEquals(reader.LocalName, atomName))
                     {
-                        route.Name = reader.ReadElementContentAsString();
+                        route.Name = ReadInnerValue(reader);
                         nameFound = true;
                     }
                 }
@@ -135,6 +135,23 @@ namespace GPXParser
 
             route.TotalElevationGain = Math.Round(runningElevationGain, 1);
             return route;
+        }
+
+        private string ReadInnerValue(XmlReader reader)
+        {
+            if (reader.IsEmptyElement)
+            {
+                return string.Empty;
+            }
+
+            reader.Read(); // Move from <ele> to text content
+            if (reader.NodeType == XmlNodeType.Text)
+            {
+                string s = reader.Value;
+                reader.Read(); // Move from text to </ele>
+                return s;
+            }
+            return string.Empty;
         }
     }
         
