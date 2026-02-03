@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RouteAppAPI.Models;
 using RouteAppAPI.Models.DTO;
 using RouteAppAPI.Services.Interfaces;
@@ -67,10 +68,51 @@ namespace RouteAppAPI.Controllers
             }
 
         }
+        [HttpGet("get-routes-by-user/{userId}")]
+        public async Task<ActionResult<ApiResponse<object>>> GetRoutes(int userId)
+        {
+            try
+            {
+                var routes = await _routeService.GetRoutesByUserId(userId);
+
+                var formattedRoutes = routes.Select(route => new
+                {
+                    routeId = route.Id,
+                    name = route.Name,
+                    distanceKm = route.DistanceKm,
+                    elevationGainM = route.ElevationGainM,
+                    isDraft = route.IsDraft,
+                    createdAt = route.CreatedAt,
+                    gpxFileUrl = route.GpxFileUrl,
+                    thumbnailUrl = route.ThumbnailUrl,
+                    difficultyLevel = route.DifficultyLevel?.Name,
+                    country = route.Country,
+                    city = route.Region
+
+
+                }).ToList();
+
+                return ApiResponse<object>.Ok(formattedRoutes, "success");
+
+            } catch (Exception e)
+            {
+                var errorResponse = ApiResponse<object>.Fail(
+                    errorMessage: "An error occurred while processing your request.",
+                    errors: new List<string> { e.Message } 
+                );
+
+                return StatusCode(500, errorResponse);
+            }
+            finally
+            {
+
+            }
+
+        }
 
         [HttpPost("initial-create-route")]
         [Consumes("multipart/form-data")]
-
+        [Authorize]
         public async Task<ActionResult<ApiResponse<object>>> InitialCreateRoute(IFormFile file)
         {
             if (file == null || file.Length == 0)
@@ -83,14 +125,9 @@ namespace RouteAppAPI.Controllers
                 return BadRequest("The files is not in .gpx format");
             }
 
-            if (User.Identity?.IsAuthenticated != true)
-            {
-                return Unauthorized("Unauthorized");
-            }
-
             await using var stream = file.OpenReadStream();
 
-            var routeCreated = await _routeService.CreateDraftRouteAsync(file.FileName, int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 1, stream);
+            var routeCreated = await _routeService.CreateDraftRouteAsync(file.FileName, int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value), stream);
 
             return ApiResponse<object>.Ok(new
             {
@@ -109,13 +146,9 @@ namespace RouteAppAPI.Controllers
         }
 
         [HttpPut("update-route")]
+        [Authorize]
         public async Task<ActionResult<ApiResponse<object>>> UpdateRoute([FromBody] RouteUpdateDto route)
         {
-
-            if (User.Identity?.IsAuthenticated != true)
-            {
-                return Unauthorized("Unauthorized");
-            }
 
             int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out var userId);
             var updateResult = await _routeService.UpdateRouteAsync(route, userId);

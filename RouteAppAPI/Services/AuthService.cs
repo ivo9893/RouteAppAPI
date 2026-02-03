@@ -71,7 +71,11 @@ namespace RouteAppAPI.Services
                 AccessToken = accessToken,
                 RefreshToken = refreshToken,
                 AccessTokenExpiry = accessTokenExpiry,
-                RefreshTokenExpiry = refreshTokenExpiry
+                RefreshTokenExpiry = refreshTokenExpiry,
+                UserId = user.Id,
+                UserFirstName = user.FirstName ?? "",
+                UserLastName = user.LastName ?? "",
+                UserLocation = user.Location ?? ""
             };
 
 

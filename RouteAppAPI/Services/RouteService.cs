@@ -28,12 +28,8 @@ namespace RouteAppAPI.Services
 
         public async Task<Models.Route> CreateDraftRouteAsync(string fileName, int userId, Stream fileStream)
         {
-            using var memoryStream = new MemoryStream();
-            await fileStream.CopyToAsync(memoryStream);
 
-            memoryStream.Position = 0;
-
-            var parsedFile = _parser.Parse(memoryStream);
+            var parsedFile = _parser.Parse(fileStream);
 
             var coordinates = parsedFile
                 .Points
@@ -48,10 +44,14 @@ namespace RouteAppAPI.Services
             var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
             var lineString = geometryFactory.CreateLineString(coordinates);
 
-            memoryStream.Position = 0;
+            if (fileStream.CanSeek)
+            {
+                fileStream.Position = 0;
+            }
+
             var uploadParams = new RawUploadParams
             {
-                File = new FileDescription(fileName, memoryStream),
+                File = new FileDescription(fileName, fileStream),
             };
 
             var cloudResult = await _cloudinary.UploadAsync(uploadParams);
@@ -117,6 +117,14 @@ namespace RouteAppAPI.Services
                 .Include(r => r.DifficultyLevel)
                 .Include(u => u.User)
                 .Where(r => r.IsDraft == false).ToListAsync();
+            return allRoutes;
+        }
+        public async Task<List<Models.Route>> GetRoutesByUserId(int userId)
+        {
+            var allRoutes = await _context.Routes
+                .Include(r => r.DifficultyLevel)
+                .Include(u => u.User)
+                .Where(r => r.IsDraft == false && r.UserId == userId).ToListAsync();
             return allRoutes;
         }
 

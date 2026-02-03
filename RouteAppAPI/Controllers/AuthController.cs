@@ -42,7 +42,11 @@ namespace RouteAppAPI.Controllers
             return Ok(new
             {
                 access_token = auth.AccessToken,
-                accessTokenExpiry = auth.AccessTokenExpiry
+                accessTokenExpiry = auth.AccessTokenExpiry,
+                userId = auth.UserId,
+                userFirstName = auth.UserFirstName,
+                userLastName = auth.UserLastName,
+                userLocation = auth.UserLocation
             });
         }
     }

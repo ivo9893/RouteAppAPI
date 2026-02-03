@@ -6,6 +6,12 @@ namespace RouteAppAPI.Models.DTO
         public string RefreshToken { get; set; }
         public DateTime AccessTokenExpiry { get; set; }
         public DateTime RefreshTokenExpiry { get; set; }
+
+        public int UserId { get; set; }
+        public string UserFirstName { get; set; }
+        public string UserLastName { get; set; }
+        public string UserEmail { get; set; }
+        public string UserLocation { get; set; }
     }
 
     public class ApiResponse<T>

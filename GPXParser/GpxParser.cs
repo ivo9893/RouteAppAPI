@@ -24,6 +24,7 @@ namespace GPXParser
 
             using var reader = XmlReader.Create(gpxStream, new XmlReaderSettings
             {
+                CloseInput = false,
                 IgnoreComments = true,
                 IgnoreWhitespace = true,
                 DtdProcessing = DtdProcessing.Ignore
